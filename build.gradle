@@ -45,10 +45,11 @@ dependencies {
 }
 
 intellij {
+  pluginName project.name
   version 'IC-143.2370.31' // I had to downgrade this for compatibility with the Gosu plugin, since ij-gosu's plugin.xml declares a bunk value of until-build="143.2147483647"
 //  version '15.0.6' // Ordinarily, just use the version number: '15.0.6' or '2016.3'. Alternatively, the precise API level is OK too: 'IC-143.2370.31'
-  plugins 'com.guidewire.gosu:4.1.1.8'
-//  pluginName 'GosuTypes'
+  plugins = ['com.guidewire.gosu:4.1.1.9',
+             'ASM Bytecode Outline:0.3.5'] //include ASM in the sandbox by default. Nice. 
 
   //if running on CI, don't download sources
   if(System.getenv('CI') != null) {

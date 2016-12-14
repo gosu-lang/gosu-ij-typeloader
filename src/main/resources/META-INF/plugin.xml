@@ -1,15 +1,12 @@
 <idea-plugin version="2">
-  <name>GosuTypes</name>
   <id>gosu.lang.types</id>
-  <description><![CDATA[
-    IntelliJ IDEA plugin for Gosu language custom types
-  ]]></description>
-  <version>1-spec-SNAPSHOT</version>
+  <name>Gosu Typeloader support for IntelliJ</name>
+  <description>This value is patched by the build script</description>
+  <version>This value is patched by the build script</version>
   <vendor email="gosu-lang@googlegroups.com" url="http://gosu-lang.org">gosu-lang.org</vendor>
   <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
-  <idea-version since-build="131"/>
-  <!--<idea-version since-build="143.2147483647" until-build="143.*"/>-->
-
+  <idea-version since-build="This value is patched by the build script"/>
+  
   <depends optional="false">com.guidewire.gosu</depends>
 
   <project-components>
