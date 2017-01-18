@@ -10,8 +10,7 @@ machine:
 
 dependencies:
   override:
-    # Gets all dependencies and compiles tests, but does not run them
-    - ./gradlew testClasses
+    - ./gradlew downloadDependencies
 
 general:
   branches:
@@ -21,9 +20,6 @@ general:
     - "build/reports/tests" # preserve the generated HTML test reports
 
 test:
-  override:
-    # Only executes tests
-    - ./gradlew check
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
