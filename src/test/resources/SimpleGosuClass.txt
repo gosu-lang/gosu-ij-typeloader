@@ -1,0 +1,18 @@
+GosuPsiGosuFile:SimpleGosuClass.gs(0,24)
+  GosuPsiImportList(0,0)
+    <empty list>
+  GosuPsiClass:SimpleGosuClass(0,24)
+    GosuPsiModifierList:(0,0)
+      <empty list>
+    GosuPsiKeyword:class('class')(0,5)
+    PsiWhiteSpace(' ')(5,6)
+    GosuPsiIdentifier:SimpleGosuClass('SimpleGosuClass')(6,21)
+    GosuPsiTypeParameterList(21,21)
+      <empty list>
+    GosuPsiReferenceList(21,21)
+      <empty list>
+    GosuPsiReferenceList(21,21)
+      <empty list>
+    PsiWhiteSpace(' ')(21,22)
+    GosuPsiToken:LBRACE('{')(22,23)
+    GosuPsiToken:RBRACE('}')(23,24)
