@@ -5,6 +5,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -12,6 +13,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
+import gw.lang.reflect.SourcePosition;
 import gw.lang.reflect.TypeSystem;
 import gw.lang.reflect.module.IModule;
 import gw.plugin.ij.custom.JavaFacadePsiClass;
@@ -44,7 +46,8 @@ public class GosuGotoDeclarationHandler extends GotoDeclarationHandlerBase
             if( facade != null )
             {
               PsiAnnotation[] annotations = ((PsiModifierListOwner)resolve).getModifierList().getAnnotations();
-              if( annotations != null && annotations.length > 0 )
+              if( annotations != null && annotations.length > 0 &&
+                  annotations[0].getQualifiedName().equals( SourcePosition.class.getName() ) )
               {
                 return findTargetFeature( annotations[0], facade );
               }
@@ -58,21 +61,24 @@ public class GosuGotoDeclarationHandler extends GotoDeclarationHandlerBase
 
   private PsiElement findTargetFeature( PsiAnnotation psiAnnotation, JavaFacadePsiClass facade )
   {
-    // int index = Integer.parseInt( psiAnnotation.getParameterList().getAttributes()[0].getValue().getText() );
-    String fqn = psiAnnotation.getParameterList().getAttributes()[1].getValue().getText();
-    fqn = StringUtil.unquoteString( fqn );
-    String name = getFeatureName( fqn );
-    String ownersType = getOwnersType( fqn );
-    if( ownersType != null )
-    {
-      PsiElement target = findIndirectTarget( ownersType, name, facade.getRawFile().getProject() );
-      if( target != null )
-      {
-        return target;
-      }
-    }
-    int iOffset = Integer.parseInt( psiAnnotation.getParameterList().getAttributes()[2].getValue().getText() );
-    int iLength = Integer.parseInt( psiAnnotation.getParameterList().getAttributes()[3].getValue().getText() );
+    PsiAnnotationMemberValue value = psiAnnotation.findAttributeValue( "originFeatureSignature" );
+    String featureName = StringUtil.unquoteString( value.getText() );
+    value = psiAnnotation.findAttributeValue( "originTypeName" );
+//    if( value != null )
+//    {
+//      String ownersType = StringUtil.unquoteString( value.getText() );
+//      if( ownersType != null )
+//      {
+//        PsiElement target = findIndirectTarget( ownersType, featureName, facade.getRawFile().getProject() );
+//        if( target != null )
+//        {
+//          return target;
+//        }
+//      }
+//    }
+
+    int iOffset = Integer.parseInt( psiAnnotation.findAttributeValue( "offset" ).getText() );
+    int iLength = Integer.parseInt( psiAnnotation.findAttributeValue( "length" ).getText() );
 
     PsiFile sourceFile = facade.getRawFile();
     IModule module = GosuModuleUtil.findModuleForPsiElement( sourceFile );
@@ -82,7 +88,7 @@ public class GosuGotoDeclarationHandler extends GotoDeclarationHandlerBase
       if( iOffset >= 0 )
       {
         //PsiElement target = sourceFile.findElementAt( iOffset );
-        return new FakeTargetElement( sourceFile, iOffset, iLength >= 0 ? iLength : 1, name );
+        return new FakeTargetElement( sourceFile, iOffset, iLength >= 0 ? iLength : 1, featureName );
       }
     }
     finally
@@ -92,17 +98,17 @@ public class GosuGotoDeclarationHandler extends GotoDeclarationHandlerBase
     return facade;
   }
 
-  private PsiElement findIndirectTarget( String ownersType, String name, Project project )
+  private PsiElement findIndirectTarget( String ownersType, String featureName, Project project )
   {
     PsiClass psiClass = JavaPsiFacadeUtil.findClass( project, ownersType, GlobalSearchScope.allScope( project ) );
-    PsiMethod[] methods = psiClass.findMethodsByName( name, false );
+    PsiMethod[] methods = psiClass.findMethodsByName( featureName, false );
     if( methods != null && methods.length > 0 )
     {
       return methods[0].getNameIdentifier();
     }
     else
     {
-      methods = psiClass.findMethodsByName( "get" + name, false );
+      methods = psiClass.findMethodsByName( "get" + featureName, false );
       if( methods != null && methods.length > 0 )
       {
         return methods[0].getNameIdentifier();
@@ -110,25 +116,4 @@ public class GosuGotoDeclarationHandler extends GotoDeclarationHandlerBase
     }
     return null;
   }
-
-  private String getFeatureName( String fqn )
-  {
-    int iPos = fqn.indexOf( '#' );
-    if( iPos < 0 )
-    {
-      return fqn;
-    }
-    return fqn.substring( iPos + 1 );
-  }
-
-  private String getOwnersType( String fqn )
-  {
-    int iPos = fqn.indexOf( '#' );
-    if( iPos < 0 )
-    {
-      return null;
-    }
-    return fqn.substring( 0, iPos );
-  }
-
 }

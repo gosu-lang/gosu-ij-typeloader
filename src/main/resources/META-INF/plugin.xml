@@ -1,13 +1,14 @@
 <idea-plugin version="2">
   <id>gosu.lang.types</id>
-  <name>Gosu Typeloader support for IntelliJ</name>
+  <name>Gosu types support for IntelliJ</name>
   <description>This value is patched by the build script</description>
   <version>This value is patched by the build script</version>
   <vendor email="gosu-lang@googlegroups.com" url="http://gosu-lang.org">gosu-lang.org</vendor>
   <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
   <idea-version since-build="This value is patched by the build script"/>
-  
-  <depends optional="false">com.guidewire.gosu</depends>
+
+  <!--Don't need the gosu plugin, this one extends Java nicely-->
+  <!--<depends optional="false">com.guidewire.gosu</depends>-->
 
   <project-components>
     <component>
@@ -16,9 +17,9 @@
   </project-components>
 
   <extensionPoints>
-    <extensionPoint name="typesystemStartupContributor" beanClass="gw.plugin.ij.core.TypeSystemStartupContributorExtensionBean"/>
+    <!--<extensionPoint name="typesystemStartupContributor" beanClass="gw.plugin.ij.core.TypeSystemStartupContributorExtensionBean"/>-->
     <extensionPoint name="fileListener" beanClass="gw.plugin.ij.core.FileListenerExtensionBean"/>
-    <extensionPoint name="typeResolver" beanClass="gw.plugin.ij.lang.psi.impl.resolvers.TypeResolverExtensionBean"/>
+    <!--<extensionPoint name="typeResolver" beanClass="gw.plugin.ij.lang.psi.impl.resolvers.TypeResolverExtensionBean"/>-->
   </extensionPoints>
 
   <extensions defaultExtensionNs="gosu.lang.types">
@@ -28,6 +29,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <java.elementFinder implementation="gw.plugin.ij.extensions.GosuTypeFinder"/>
     <gotoDeclarationHandler implementation="gw.plugin.ij.extensions.GosuGotoDeclarationHandler"/>
+    <!--<java.shortNamesCache implementation="gw.plugin.ij.extensions.CustomPsiShortNamesCache"/>-->
   </extensions>
 
 </idea-plugin>

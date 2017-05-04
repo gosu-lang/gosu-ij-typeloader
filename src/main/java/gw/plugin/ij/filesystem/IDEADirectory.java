@@ -56,7 +56,7 @@ public class IDEADirectory extends IDEAResource implements IDirectory
   @Override
   public List<? extends IDirectory> listDirs() {
     List<IDirectory> result = new ArrayList<>();
-    if (_virtualFile != null) {
+    if (_virtualFile != null && _virtualFile.isValid()) {
       for (VirtualFile child : _virtualFile.getChildren()) {
         if (child.isDirectory()) {
           result.add(new IDEADirectory(child));
@@ -70,7 +70,7 @@ public class IDEADirectory extends IDEAResource implements IDirectory
   @Override
   public List<? extends IFile> listFiles() {
     List<IFile> result = new ArrayList<>();
-    if (_virtualFile != null) {
+    if (_virtualFile != null && _virtualFile.isValid()) {
       for (VirtualFile child : _virtualFile.getChildren()) {
         if (!child.isDirectory()) {
           result.add(new IDEAFile(child));

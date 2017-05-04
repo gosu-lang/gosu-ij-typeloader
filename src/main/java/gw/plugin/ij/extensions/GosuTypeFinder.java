@@ -1,5 +1,9 @@
 package gw.plugin.ij.extensions;
 
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.ide.plugins.PluginManager;
+import com.intellij.openapi.extensions.PluginId;
+import com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiDirectory;
@@ -9,18 +13,21 @@ import com.intellij.psi.PsiPackage;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Processor;
+import gw.lang.parser.IFileRepositoryBasedType;
 import gw.lang.reflect.INamespaceType;
 import gw.lang.reflect.IType;
 import gw.lang.reflect.TypeSystem;
+import gw.lang.reflect.gs.IGosuClass;
 import gw.lang.reflect.gs.TypeName;
-import gw.lang.reflect.java.IJavaType;
+import gw.lang.reflect.module.IModule;
 import gw.plugin.ij.lang.psi.impl.CustomPsiClassCache;
+import gw.plugin.ij.util.GosuModuleUtil;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -38,7 +45,8 @@ public class GosuTypeFinder extends PsiElementFinder
   @Override
   public PsiClass findClass( @NotNull String s, @NotNull GlobalSearchScope globalSearchScope )
   {
-    TypeSystem.pushGlobalModule();
+    IModule module = findModule( globalSearchScope );
+    TypeSystem.pushModule( module );
     try
     {
       IType type = TypeSystem.getByFullNameIfValid( s );
@@ -50,42 +58,60 @@ public class GosuTypeFinder extends PsiElementFinder
     }
     finally
     {
-      TypeSystem.popGlobalModule();
+      TypeSystem.popModule( module );
     }
+  }
+
+  public static IModule findModule( @NotNull GlobalSearchScope globalSearchScope )
+  {
+    IModule module;
+    if( globalSearchScope instanceof ModuleWithDependenciesScope )
+    {
+      module = GosuModuleUtil.getModule( ((ModuleWithDependenciesScope)globalSearchScope).getModule() );
+    }
+    else
+    {
+      module = TypeSystem.getGlobalModule();
+    }
+    return module;
   }
 
   @NotNull
   @Override
   public PsiClass[] getClasses( @NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope )
   {
-    TypeSystem.pushGlobalModule();
+    IModule module = findModule( scope );
+    TypeSystem.pushModule( module );
     try
     {
       INamespaceType namespace = TypeSystem.getNamespace( psiPackage.getQualifiedName() );
       if( namespace != null )
       {
-        PsiManager manager = PsiManagerImpl.getInstance( (Project)namespace.getModule().getExecutionEnvironment().getProject().getNativeProject() );
-        Set<PsiClass> types = new HashSet<PsiClass>();
+        //PsiManager manager = PsiManagerImpl.getInstance( (Project)namespace.getModule().getExecutionEnvironment().getProject().getNativeProject() );
+        Map<String, PsiClass> types = new HashMap<>();
         Set<TypeName> children = namespace.getChildren( null );
         for( TypeName tn : children )
         {
-          IType type = TypeSystem.getByFullNameIfValidNoJava( tn.name );
+          IType type = TypeSystem.getByFullNameIfValid( tn.name );
           if( acceptType( type ) )
           {
-            PsiClass psiClass = CustomPsiClassCache.instance().getPsiClass( type );
-            if( psiClass != null )
+            if( !types.containsKey( tn.name ) )
             {
-              types.add( psiClass );
+              PsiClass psiClass = CustomPsiClassCache.instance().getPsiClass( type );
+              if( psiClass != null )
+              {
+                types.put( tn.name, psiClass );
+              }
             }
           }
         }
-        return types.toArray( new PsiClass[types.size()] );
+        return types.values().toArray( new PsiClass[types.size()] );
       }
       return new PsiClass[0];
     }
     finally
     {
-      TypeSystem.popGlobalModule();
+      TypeSystem.popModule( module );
     }
   }
 
@@ -100,7 +126,8 @@ public class GosuTypeFinder extends PsiElementFinder
   @Override
   public PsiPackage[] getSubPackages( @NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope )
   {
-    TypeSystem.pushGlobalModule();
+    IModule module = findModule( scope );
+    TypeSystem.pushModule( module );
     try
     {
       String parentPackage = psiPackage.getQualifiedName();
@@ -108,7 +135,7 @@ public class GosuTypeFinder extends PsiElementFinder
       if( namespace != null )
       {
         PsiManager manager = PsiManagerImpl.getInstance( (Project)namespace.getModule().getExecutionEnvironment().getProject().getNativeProject() );
-        List<PsiPackage> children = new ArrayList<>();
+        Set<PsiPackage> children = new HashSet<>();
         for( TypeName child: namespace.getChildren( null ) )
         {
           if( child.kind == TypeName.Kind.NAMESPACE )
@@ -121,7 +148,7 @@ public class GosuTypeFinder extends PsiElementFinder
     }
     finally
     {
-      TypeSystem.popGlobalModule();
+      TypeSystem.popModule( module );
     }
     return super.getSubPackages( psiPackage, scope );
   }
@@ -178,10 +205,34 @@ public class GosuTypeFinder extends PsiElementFinder
 
   private boolean acceptType( IType type )
   {
-    //## todo: accept only types with extensions specified in the Manifest
-    return type != null && !(type instanceof IJavaType); // && !(type instanceof IGosuClass);
+    if( type == null )
+    {
+      return false;
+    }
+
+    if( type instanceof IFileRepositoryBasedType )
+    {
+      IFileRepositoryBasedType ftype = (IFileRepositoryBasedType)type;
+      if( ftype instanceof IGosuClass )
+      {
+        return !isGosuPluginEnabled() || isSourceProducer( ftype );
+      }
+      return isSourceProducer( ftype );
+    }
+
+    return true;
   }
 
+  private boolean isSourceProducer( IFileRepositoryBasedType ftype )
+  {
+    return ftype.getSourceFileHandle() != null && ftype.getSourceFileHandle().getSourceProducer() != null;
+  }
+
+  private boolean isGosuPluginEnabled()
+  {
+    IdeaPluginDescriptor gosuPlugin = PluginManager.getPlugin( PluginId.getId( "com.guidewire.gosu" ) );
+    return gosuPlugin != null && gosuPlugin.isEnabled();
+  }
   public static GosuTypeFinder instance()
   {
     return INSTANCE;

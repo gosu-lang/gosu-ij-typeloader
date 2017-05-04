@@ -273,17 +273,17 @@ public class PluginLoaderUtil
           reportStartupError( e );
         }
 
-        try
-        {
-          for( ITypeSystemStartupContributor pluginListener : getStartupContributors() )
-          {
-            pluginListener.afterPluginShutdown( _project );
-          }
-        }
-        catch( Exception e )
-        {
-          ExceptionUtil.showNonFatalError( "Exception during Gosu plugin shutdown.", e );
-        }
+//        try
+//        {
+//          for( ITypeSystemStartupContributor pluginListener : getStartupContributors() )
+//          {
+//            pluginListener.afterPluginShutdown( _project );
+//          }
+//        }
+//        catch( Exception e )
+//        {
+//          ExceptionUtil.showNonFatalError( "Exception during Gosu plugin shutdown.", e );
+//        }
       }
     }
     finally
