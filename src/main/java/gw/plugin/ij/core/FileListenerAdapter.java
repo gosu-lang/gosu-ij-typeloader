@@ -4,7 +4,7 @@
 
 package gw.plugin.ij.core;
 
-import gw.fs.IResource;
+import manifold.api.fs.IResource;
 
 public class FileListenerAdapter implements IFileListener {
 

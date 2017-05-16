@@ -18,13 +18,14 @@ import gw.lang.reflect.INamespaceType;
 import gw.lang.reflect.IType;
 import gw.lang.reflect.TypeSystem;
 import gw.lang.reflect.gs.IGosuClass;
-import gw.lang.reflect.gs.TypeName;
+import gw.lang.reflect.module.IExecutionEnvironment;
 import gw.lang.reflect.module.IModule;
 import gw.plugin.ij.lang.psi.impl.CustomPsiClassCache;
 import gw.plugin.ij.util.GosuModuleUtil;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import manifold.api.sourceprod.TypeName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,7 +72,8 @@ public class GosuTypeFinder extends PsiElementFinder
     }
     else
     {
-      module = TypeSystem.getGlobalModule();
+      IExecutionEnvironment execEnv = TypeSystem.getExecutionEnvironment( globalSearchScope.getProject() );
+      module = execEnv.getGlobalModule();
     }
     return module;
   }

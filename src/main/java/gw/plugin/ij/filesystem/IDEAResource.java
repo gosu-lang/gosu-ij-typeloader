@@ -10,13 +10,13 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.impl.jar.JarFileSystemImpl;
 import com.intellij.openapi.vfs.impl.local.LocalFileSystemImpl;
 import gw.config.CommonServices;
-import gw.fs.IDirectory;
-import gw.fs.IResource;
-import gw.fs.ResourcePath;
 import gw.plugin.ij.util.FileUtil;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import manifold.api.fs.IDirectory;
+import manifold.api.fs.IResource;
+import manifold.api.fs.ResourcePath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

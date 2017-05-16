@@ -5,9 +5,9 @@
 package gw.plugin.ij.filesystem;
 
 import com.intellij.openapi.vfs.VirtualFile;
-import gw.fs.IDirectory;
-import gw.fs.IFile;
-import gw.fs.IResource;
+import manifold.api.fs.IDirectory;
+import manifold.api.fs.IFile;
+import manifold.api.fs.IResource;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;

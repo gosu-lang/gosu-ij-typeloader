@@ -12,11 +12,11 @@ import gw.lang.reflect.IType;
 import gw.lang.reflect.SimpleTypeLoader;
 import gw.lang.reflect.TypeSystem;
 import gw.lang.reflect.gs.GosuClassTypeLoader;
-import gw.lang.reflect.gs.ISourceProducer;
 import gw.lang.reflect.module.IModule;
 import gw.plugin.ij.custom.JavaFacadePsiClass;
 import gw.plugin.ij.lang.psi.impl.CustomPsiClassCache;
 import java.util.Set;
+import manifold.api.sourceprod.ISourceProducer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 

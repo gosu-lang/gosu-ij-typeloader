@@ -5,23 +5,18 @@
 package gw.plugin.ij.filesystem;
 
 import com.google.common.collect.Maps;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.impl.jar.JarFileSystemImpl;
 import com.intellij.openapi.vfs.impl.local.LocalFileSystemImpl;
-import com.intellij.testFramework.LightVirtualFile;
-import gw.config.BaseService;
 import gw.config.CommonServices;
-import gw.fs.IDirectory;
-import gw.fs.IFile;
-import gw.fs.IResource;
-import gw.fs.jar.JarFileDirectoryImpl;
-import gw.fs.url.URLFileImpl;
-import gw.lang.reflect.module.IFileSystem;
-import gw.lang.reflect.module.IModule;
-import gw.plugin.ij.util.GosuModuleUtil;
-import gw.plugin.ij.util.LightVirtualFileWithModule;
+import manifold.api.fs.IDirectory;
+import manifold.api.fs.IFile;
+import manifold.api.fs.IFileSystem;
+import manifold.api.fs.IResource;
+import manifold.api.fs.jar.JarFileDirectoryImpl;
+import manifold.api.fs.url.URLFileImpl;
+import manifold.api.service.BaseService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -101,14 +96,6 @@ public class IDEAFileSystem extends BaseService implements IFileSystem
   @Override
   public IFile getIFile(URL url) {
     return _iFileResourceExtractor.getClassResource(url);
-  }
-
-  @NotNull
-  @Override
-  public IFile getFakeFile(@NotNull URL url, IModule module) {
-    LightVirtualFile virtualFile = LightVirtualFileWithModule.create(url.getFile(), module);
-    virtualFile.putUserData(ModuleUtil.KEY_MODULE, GosuModuleUtil.getModule( module ));
-    return new IDEAFile(virtualFile);
   }
 
   @NotNull

@@ -7,7 +7,7 @@ package gw.plugin.ij.core;
 import com.intellij.openapi.compiler.CompilerPaths;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
-import gw.fs.IDirectory;
+import manifold.api.fs.IDirectory;
 import gw.lang.reflect.module.INativeModule;
 import gw.plugin.ij.util.FileUtil;
 

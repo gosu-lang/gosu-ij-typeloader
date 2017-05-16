@@ -6,9 +6,9 @@ package gw.plugin.ij.core;
 
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.extensions.PluginId;
-import gw.config.BaseService;
 import gw.config.IExtensionFolderLocator;
 import gw.lang.reflect.TypeSystem;
+import manifold.api.service.BaseService;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;

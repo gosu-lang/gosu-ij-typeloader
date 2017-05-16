@@ -16,9 +16,7 @@ import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import gw.lang.GosuShop;
 import gw.lang.parser.IFileRepositoryBasedType;
-import gw.lang.reflect.AbstractTypeSystemListener;
 import gw.lang.reflect.IType;
-import gw.lang.reflect.RefreshRequest;
 import gw.lang.reflect.TypeSystem;
 import gw.lang.reflect.java.IJavaClassInfo;
 import gw.lang.reflect.java.IJavaType;
@@ -28,6 +26,8 @@ import gw.plugin.ij.util.FileUtil;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import manifold.api.host.AbstractTypeSystemListener;
+import manifold.api.host.RefreshRequest;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 

@@ -27,7 +27,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import gw.config.CommonServices;
 import gw.config.IExtensionFolderLocator;
 import gw.config.IPlatformHelper;
-import gw.fs.IDirectory;
+import manifold.api.fs.IDirectory;
 import gw.lang.GosuShop;
 import gw.lang.init.GosuInitialization;
 import gw.lang.parser.IGosuParser;
@@ -37,11 +37,11 @@ import gw.lang.reflect.java.IJavaType;
 import gw.lang.reflect.java.JavaTypes;
 import gw.lang.reflect.module.Dependency;
 import gw.lang.reflect.module.IExecutionEnvironment;
-import gw.lang.reflect.module.IFileSystem;
 import gw.lang.reflect.module.IJreModule;
 import gw.lang.reflect.module.IModule;
 import gw.plugin.ij.filesystem.IDEAFileSystem;
 import gw.plugin.ij.util.GosuModuleUtil;
+import manifold.api.fs.IFileSystem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -164,8 +164,9 @@ public class TypeSystemStarter {
 
     IExecutionEnvironment execEnv = TypeSystem.getExecutionEnvironment( PluginLoaderUtil.getFrom( project ) );
     GosuInitialization.instance( execEnv ).uninitializeRuntime();
+    GosuInitialization.instance( execEnv ).uninitializeRuntime();
     try {
-      CommonServices.getKernel().redefineService_Privileged(IFileSystem.class, new IDEAFileSystem());
+      CommonServices.getKernel().redefineService_Privileged( IFileSystem.class, new IDEAFileSystem());
     } catch (Exception e) {
       LOG.error(e);
     }
